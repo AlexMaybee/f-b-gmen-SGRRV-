@@ -25,12 +25,17 @@ class customevent{
 
         if($bitrixfunctionsObj->is_1cUser() === false){
 
-            $contactSelect = ['ID','NAME','LAST_NAME',
-                'TYPE_ID','COMPANY_ID','COMMENTS','ASSIGNED_BY_ID',
+            $contactSelect = [
+
+
                 'UF_CRM_1571224508', //ID в 1С
-                'UF_CRM_1565361957088', //Статус клиента
                 'UF_CRM_1565362223845', //Направление
 
+                'ID','NAME','LAST_NAME',
+                'TYPE_ID','COMPANY_ID','COMMENTS',
+                'SOURCE_ID','BIRTHDATE','ASSIGNED_BY_ID',
+                'UF_CRM_1572857630', //Главный контрагент
+                'UF_CRM_1572076993739', //Адрес доставки
             ];
             $contactData = $bitrixfunctionsObj->getContactData(['ID' => $arFields['ID']],$contactSelect);
 
@@ -48,11 +53,11 @@ class customevent{
                 $onSentArr = [
                     '1C_CONTACT_ID' => $contactData[0]['UF_CRM_1571224508'], //ID 1C
                     'NAME' => HTMLToTxt($contactData[0]['NAME']),
-                    'FIZ_ADRESS' => HTMLToTxt($contactData[0]['LAST_NAME']),
-                    'STATUS' => $contactData[0]['UF_CRM_1565361957088'], //STATUS
+                    'LAST_NAME' => HTMLToTxt($contactData[0]['LAST_NAME']),
                     'TYPE' => $contactData[0]['TYPE_ID'],
                     'COMMENTS' => $contactData[0]['COMMENTS'],
                     'ASSIGNED_BY' => $assignedName,
+                    'SHIPPING_ADDRESS' => $contactData[0]['UF_CRM_1572076993739'], //Адрес Доставки
                     'REQUISITES' => [],
                     'COMMUNICATION' => [],
                     '1C_COMPANY_ID' => '',
@@ -89,19 +94,45 @@ class customevent{
                 //реквизиты
                 $reqFilter = [
                     "filter" => [
-                        "ENTITY_ID"=>$contactData[0]['ID'],
-                        "ENTITY_TYPE_ID"=>\CCrmOwnerType::Contact/*,'PRESET_ID'=>1*/
+                        "ENTITY_ID" => $contactData[0]['ID'],
+                        "ENTITY_TYPE_ID" => \CCrmOwnerType::Contact/*,'PRESET_ID'=>1*/
                     ],
+                    'select' => [
+                        'ID','NAME','RQ_NAME','RQ_INN','RQ_EMAIL','UF_CRM_1572097156',
+                    ],
+                    'order' => ['ID' => 'DESC'],
                 ];
                 $mainRequisites = $bitrixfunctionsObj->getRequisiteByFilter($reqFilter);
                 if($mainRequisites){
                     foreach ($mainRequisites as $requisite){
+
+                        //перевод даты из объекта в строку
+                        $dateOfRegistr = $bitrixfunctionsObj->convertDateObjToDate($requisite['UF_CRM_1572097156'],'d.m.Y');
+
+                        //банковские реквизиты
+                        $bankRequisites = $bitrixfunctionsObj->getBankRequisitesByFilter(
+                            ['ENTITY_ID' => $requisite['ID'],'ENTITY_TYPE_ID' => \CCrmOwnerType::Requisite,]
+                        );
+
+                        //адреса
+
+
+
+                        
                         $onSentArr['REQUISITES'][] = [
+                            'ID' => $requisite['ID'],
                             'TITLE' => $requisite['NAME'],
                             'FIO' => $requisite['RQ_NAME'],
                             'INN' => $requisite['RQ_INN'],
                             'VAT_CERT_NUM' => $requisite['RQ_VAT_CERT_NUM'],
+                            'DOC_EMAIL' => $requisite['RQ_EMAIL'], //обмен доками
+                            'REGISTER_DATE' => $dateOfRegistr, //дата регистрации
+                            'BANK_REQUISITES' => $bankRequisites, //Банковские реквизиты, arr
+                            'ADDRESSES' => [], //Банковские реквизиты, arr
                         ];
+
+
+//                        $onSentArr['REQUISITES'][] = $requisite;
                     }
                 }
 
@@ -266,10 +297,22 @@ class customevent{
                 'COMPANY_ID','CONTACT_ID','STAGE_ID',
                 'OPPORTUNITY','COMMENTS','CURRENCY_ID',
                 'UF_CRM_1571137429', //ID в 1С
-                'UF_CRM_5D6538200FE39', //ID манагера по работе с клиентами
-                'UF_CRM_5D65381FE0D50', //Подразделение
-//                'UF_CRM_1565361957088', //Статус клиента
-//                'UF_CRM_1565362223845', //Направление
+//                'UF_CRM_5D6538200FE39', //ID манагера по работе с клиентами
+//                'UF_CRM_5D65381FE0D50', //Подразделение
+
+
+                'UF_CRM_1571754349830', //Торговая точка (адрес)
+                'UF_CRM_1571753979685', //Соглашение
+                'CLOSEDATE', //Дата отгрузки
+                'UF_CRM_1571754477845', //Группа контрагента
+                'TYPE_ID', //Операция
+                'UF_CRM_5D65381FF4038', //Категория
+                'UF_CRM_1571754768355', //Договор
+                'UF_CRM_1571755263449', //Склад
+                'UF_CRM_1571755963331', //Способ доставки
+                'UF_CRM_1571755984914', //Адрес доставки
+                'UF_CRM_1571756036294', //Зона доставки
+                'UF_CRM_1571756516', //Менеджер
 
             ];
             $dealData = $bitrixfunctionsObj->getDealData(['ID' => $arFields['ID']],$dealSelect);
@@ -286,8 +329,8 @@ class customevent{
 
 
                 $managerName = '';
-                if($dealData[0]['UF_CRM_5D6538200FE39']){
-                    $managerData = $bitrixfunctionsObj->getUserData($dealData[0]['UF_CRM_5D6538200FE39']);
+                if($dealData[0]['UF_CRM_1571756516']){
+                    $managerData = $bitrixfunctionsObj->getUserData($dealData[0]['UF_CRM_1571756516']);
                     ($managerData)
 //                    ? $managerName = $managerData['LAST_NAME'].' '.$managerData['NAME']
                         ? $managerName = $managerData['EMAIL'] //Временно!!!
@@ -303,11 +346,25 @@ class customevent{
                     'OPPORTUNITY' => $dealData[0]['OPPORTUNITY'], //DEAL_SUM
                     'CURRENCY_ID' => $dealData[0]['CURRENCY_ID'], //CURRENCY
                     'COMMENTS' => $dealData[0]['COMMENTS'],
+
+                    'POINT_SALE' => $dealData[0]['UF_CRM_1571754349830'],
+                    'AGREEMENT' => $dealData[0]['UF_CRM_1571753979685'],
+                    'SHIPMENT_DATE' => $dealData[0]['CLOSEDATE'],
+                    'CLIENT_CROUP' => $dealData[0]['UF_CRM_1571754477845'],
+                    'OPERATION' => $dealData[0]['TYPE_ID'],
+                    'CLIENT_CATEGORY' => $dealData[0]['UF_CRM_5D65381FF4038'],
+                    'CONTRACT' => $dealData[0]['UF_CRM_1571754768355'],
+                    'STORE' => $dealData[0]['UF_CRM_1571755263449'],
+                    'DELIVERY_METHOD' => $dealData[0]['UF_CRM_1571755963331'],
+                    'DELIVERY_ADDRESS' => $dealData[0]['UF_CRM_1571755984914'],
+                    'DELIVERY_ZONE' => $dealData[0]['UF_CRM_1571756036294'],
                     'MANAGER' => $managerName, //RESP MANAGER For CLIEnT
-                    'SUB_DIVISION' => $dealData[0]['UF_CRM_5D65381FE0D50'], //subDiv
                     'CONTACTS' => [],
                     'PRODUCTS' => [],
                     '1C_COMPANY_ID' => '',
+
+
+
                 ];
 
                 //Получаем товарі сделки + их код из 1С

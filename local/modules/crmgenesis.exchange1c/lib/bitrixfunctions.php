@@ -7,6 +7,7 @@ namespace Crmgenesis\Exchange1c;
 
 use Bitrix\Main\Web\HttpClient;
 use \Bitrix\Crm\EntityRequisite;
+use \Bitrix\Crm\EntityBankDetail;
 
 class bitrixfunctions{
 
@@ -145,6 +146,15 @@ class bitrixfunctions{
         return $result;
     }
 
+    public function getBankRequisitesByFilter($filter){
+        $result = [];
+        $req = new EntityBankDetail;
+        $rs = $req->getList(["filter" => $filter]);
+        while($row = $rs->fetch())
+            $result[] = $row;
+        return $result;
+    }
+
     //товары по ID сделки
     public function getDealProducts($dealId){
         return $dealProducts = \CCrmDeal::LoadProductRows($dealId);
@@ -171,6 +181,12 @@ class bitrixfunctions{
        $result = [];
        $arr = \CUser::GetByID($id);
        return $result = $arr->Fetch();
+    }
+
+    //перевод даты из объекта в строку
+    public function convertDateObjToDate($objField,$dateFormat){
+        $dateObj = new $objField;
+        return $date = $dateObj->toString(new \Bitrix\Main\Context\Culture(["FORMAT_DATETIME" => $dateFormat]));
     }
 
 }
