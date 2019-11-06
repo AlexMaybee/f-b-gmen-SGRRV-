@@ -8,6 +8,7 @@ namespace Crmgenesis\Exchange1c;
 use Bitrix\Main\Web\HttpClient;
 use \Bitrix\Crm\EntityRequisite;
 use \Bitrix\Crm\EntityBankDetail;
+use \Bitrix\Crm\EntityAddress;
 
 class bitrixfunctions{
 
@@ -155,6 +156,14 @@ class bitrixfunctions{
         return $result;
     }
 
+    public function getRequisiteAddressesByFilter($filter){
+        $result = [];
+        $addr = new EntityAddress;
+        $addrMass = $addr->getList(["filter" => $filter]);
+        while($mass = $addrMass->fetch()) $result[] = $mass;
+        return $result;
+    }
+
     //товары по ID сделки
     public function getDealProducts($dealId){
         return $dealProducts = \CCrmDeal::LoadProductRows($dealId);
@@ -167,7 +176,7 @@ class bitrixfunctions{
     //данные товара
     public function getListElementsByFilter($arFilter,$arSelect){
         $result = [];
-        $resultList = \CIBlockElement::GetList(array(), $arFilter, false, false, $arSelect);
+        $resultList = \CIBlockElement::GetList([], $arFilter, false, false, $arSelect);
         while ($list = $resultList->Fetch()) $result[] = $list;
         return $result;
     }
