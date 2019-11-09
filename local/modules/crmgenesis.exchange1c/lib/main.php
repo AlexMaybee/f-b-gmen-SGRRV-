@@ -3,7 +3,7 @@ namespace Crmgenesis\Exchange1c;
 
 class Main
 {
-    const MODULE_ID = 'crmgenesis.exchange1c';
+//    const MODULE_ID = 'crmgenesis.exchange1c';
 
     public function GetPatch($notDocumentRoot=false)
     {

@@ -10,7 +10,7 @@ use \Bitrix\Crm\EntityRequisite;
 use \Bitrix\Crm\EntityBankDetail;
 use \Bitrix\Crm\EntityAddress;
 
-class bitrixfunctions{
+class Bitrixfunctions{
 
     const USER_1C = 40; //Вставить ID пользователя 1С
 
@@ -196,6 +196,24 @@ class bitrixfunctions{
     public function convertDateObjToDate($objField,$dateFormat){
         $dateObj = new $objField;
         return $date = $dateObj->toString(new \Bitrix\Main\Context\Culture(["FORMAT_DATETIME" => $dateFormat]));
+    }
+    
+    //Перезапись выбранных полей элемента списка (А не всех!!!)
+    public function updatePropertiesInListElement($elemID,$iBlockId,$property_values){
+        $elem = new \CIBlockElement;
+        $is_updated = $elem->SetPropertyValuesEx($elemID,$iBlockId,$property_values);
+        return $is_updated;
+    }
+
+    //ИСпользовать для товаров или эл-в списков, если в них будут множ. значения!!!
+    public function getListElementsAndPropsByFilter($arFilter,$arSelect){
+        $result = [];
+        //пример получения всех свойств (не работает в обычном виде) -  ["ID", "IBLOCK_ID", "NAME","PROPERTY_*"]
+        //без запроса в выборке "IBLOCK_ID" не будет работать!!!
+        $resultList = \CIBlockElement::GetList([], $arFilter, false, false,$arSelect);
+        while($ob = $resultList->GetNextElement())
+            $result[] = array_merge($ob->GetFields(),$ob->GetProperties());
+        return $result;
     }
 
 }
