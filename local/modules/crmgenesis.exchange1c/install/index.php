@@ -50,6 +50,9 @@ class crmgenesis_exchange1c extends CModule{
         EventManager::getInstance()->registerEventHandler('iblock', 'OnAfterIBlockElementAdd', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithLists');
         EventManager::getInstance()->registerEventHandler('iblock', 'OnAfterIBlockElementUpdate', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithLists');
 
+//        EventManager::getInstance()->registerEventHandler('crm', 'OnCrmRequisiteAdd', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithMainRequisites');
+//        EventManager::getInstance()->registerEventHandler('crm', 'OnCrmRequisiteUpdate', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithMainRequisites');
+
         return true;
     }
 
@@ -68,6 +71,9 @@ class crmgenesis_exchange1c extends CModule{
 
         EventManager::getInstance()->unRegisterEventHandler('iblock', 'OnAfterIBlockElementAdd', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithLists');
         EventManager::getInstance()->unRegisterEventHandler('iblock', 'OnAfterIBlockElementUpdate', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithLists');
+
+//        EventManager::getInstance()->unRegisterEventHandler('crm', 'OnCrmRequisiteAdd', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithMainRequisites');
+//        EventManager::getInstance()->unRegisterEventHandler('crm', 'OnCrmRequisiteUpdate', $this->MODULE_ID, 'Crmgenesis\Exchange1c\Customevent', 'workWithMainRequisites');
 
         return true;
     }

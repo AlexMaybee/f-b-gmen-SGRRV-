@@ -52,7 +52,7 @@ if($data['ACTION']){
 
         //Прием контакта
         case 'CONTACT':
-            $result = (new Crmgenesis\Exchange1c\incomeb24)->workWithIncomeContact($data);
+            $result = Crmgenesis\Exchange1c\Incomeb24::workWithIncomeContact($data);
             break;
 
         default:

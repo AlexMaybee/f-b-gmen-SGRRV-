@@ -5,7 +5,9 @@
 
 namespace Crmgenesis\Exchange1c;
 
-class incomeb24{
+use  \Crmgenesis\Exchange1c\Bitrixfunctions;
+
+class Incomeb24{
 
     public function workWithIncomeContact($data){
         $result = [
@@ -14,10 +16,8 @@ class incomeb24{
             'error' => false,
         ];
 
-        $bitrixfunctionsObj = new bitrixfunctions();
-
         // !!! если авторизированный пользователь == 1С, то принимаем (в событиях наоборот)
-        if($bitrixfunctionsObj->is_1cUser() === true){
+        if(Bitrixfunctions::is_1cUser() === true){
 
         }
         $result['result'] = $data;

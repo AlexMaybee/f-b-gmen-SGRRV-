@@ -164,6 +164,15 @@ class Bitrixfunctions{
         return $result;
     }
 
+
+    //получаем список выбранных в счете реквизитов (с приставкой "MC_" - реквизиты наши, без - клиентские)
+    public function getSelectedRequisitesInInvoice($filter){
+        return $record = \Bitrix\Crm\Requisite\LinkTable::getList(Array(
+            'select' => ['*'],
+            'filter' => $filter,//["ENTITY_ID"=> 13, "ENTITY_TYPE_ID"=> 5],
+        ))->fetchAll();
+    }
+
     //товары по ID сделки
     public function getDealProducts($dealId){
         return $dealProducts = \CCrmDeal::LoadProductRows($dealId);
@@ -215,5 +224,7 @@ class Bitrixfunctions{
             $result[] = array_merge($ob->GetFields(),$ob->GetProperties());
         return $result;
     }
+
+
 
 }
