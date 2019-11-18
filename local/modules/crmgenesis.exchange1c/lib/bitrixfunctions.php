@@ -225,6 +225,38 @@ class Bitrixfunctions{
         return $result;
     }
 
+    //работа со справочниками
+    public function getReferenceBook($order,$filter){
+        //array('ENTITY_ID' => 'CONTACT_TYPE', 'STATUS_ID' => $ID)
+        $result = [];
+        $db_list = \CCrmStatus::GetList($order, $filter);
+        while ($ar_result = $db_list->GetNext()){
 
+            //убираем из названий єкранирующие єлементі
+            $ar_result['NAME'] = HTMLToTxt($ar_result['NAME']);
+            $result[] = $ar_result;
+        }
+        return $result;
+    }
+
+    //получение значения поля по ID значения
+    public function getUserFieldValueByValId($filter){
+        $result = [];
+        $rsEnum = \CUserFieldEnum::GetList([],$filter);
+        while($arEnum = $rsEnum->GetNext())
+            $result[] = $arEnum;
+        return $result;
+    }
+
+    //массив стадий по направлению сделки
+    public function getCategoryStages($category_id){
+        $stages = \Bitrix\Crm\Category\DealCategory::getStageList($category_id);
+        return $stages;
+    }
+
+    //название категории сделки по ее ID
+    public function getCategoryNameById($category_id){
+        return $name = \Bitrix\Crm\Category\DealCategory::getName($category_id);
+    }
 
 }
