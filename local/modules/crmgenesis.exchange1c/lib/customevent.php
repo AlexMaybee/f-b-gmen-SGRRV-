@@ -83,12 +83,15 @@ class Customevent{
                 $requisites = self::getRequisites(["ENTITY_ID" => $contactData[0]['ID'],"ENTITY_TYPE_ID" => \CCrmOwnerType::Contact]);
 
                 $onSentArr = [
-                    '1C_CONTACT_ID' => $contactData[0]['UF_CRM_1571224508'], //ID 1C
+//                    '1C_CONTACT_ID' => $contactData[0]['UF_CRM_1571224508'], //ID 1C
+//                    '1C_COMPANY_ID' => '',
+//                    '1C_MAIN_CONTRAGENT_ID' => $mainContragent,
+                    'ID' => $contactData[0]['ID'], //ID 1C
                     'NAME' => HTMLToTxt($contactData[0]['NAME']),
                     'LAST_NAME' => HTMLToTxt($contactData[0]['LAST_NAME']),
                     'TYPE' => $contactType,
-                    '1C_COMPANY_ID' => '',
-                    '1C_MAIN_CONTRAGENT_ID' => $mainContragent,
+                    'COMPANY_ID' => $contactData[0]['COMPANY_ID'],
+                    'MAIN_CONTRAGENT_ID' => $mainContragent,
                     'SOURCE' => $source,
                     'ASSIGNED_BY' => $assignedEmail, //Договорились сопоставлять пользователей по емейлу
                     'COMMENTS' => $contactData[0]['COMMENTS'],
@@ -101,14 +104,14 @@ class Customevent{
                 ];
 
                 //если есть ID компании, то получаем и ее ID в 1с
-                if($contactData[0]['COMPANY_ID'] > 0){
-                    $companyResult = Bitrixfunctions::getCompanyData(
-                        ['ID' => $contactData[0]['COMPANY_ID']],
-                        ['ID','UF_CRM_1571234538']
-                    );
-                    if($companyResult)
-                        $onSentArr['1C_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
-                }
+//                if($contactData[0]['COMPANY_ID'] > 0){
+//                    $companyResult = Bitrixfunctions::getCompanyData(
+//                        ['ID' => $contactData[0]['COMPANY_ID']],
+//                        ['ID','UF_CRM_1571234538']
+//                    );
+//                    if($companyResult)
+//                        $onSentArr['1C_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
+//                }
 
 
 //                $sentDataRes = Bitrixfunctions::makePostRequest(self::REQUEST_URL,
@@ -198,7 +201,8 @@ class Customevent{
                 $requisites = self::getRequisites(["ENTITY_ID" => $companyData[0]['ID'],"ENTITY_TYPE_ID"=>\CCrmOwnerType::Company]);
 
                 $onSentArr = [
-                    '1C_COMPANY_ID' => $companyData[0]['UF_CRM_1571234538'], //ID 1C
+//                    '1C_COMPANY_ID' => $companyData[0]['UF_CRM_1571234538'], //ID 1C
+                    'ID' => $companyData[0]['ID'], //ID
                     'TITLE' => HTMLToTxt($companyData[0]['TITLE']),
                     'IS_MY_COMPANY' => $companyData[0]['IS_MY_COMPANY'],
                     'TYPE' => $companyType,
@@ -221,7 +225,8 @@ class Customevent{
                     ['COMPANY_ID' => $companyData[0]['ID']],['ID','UF_CRM_1571224508']);
                 if($contacts)
                     foreach ($contacts as $contact)
-                        $onSentArr['CONTACTS'][]['1C_CONTACT_ID'] = $contact['UF_CRM_1571224508'];
+//                        $onSentArr['CONTACTS'][]['1C_CONTACT_ID'] = $contact['UF_CRM_1571224508'];
+                        $onSentArr['CONTACTS'][]['ID'] = $contact['ID'];
 
 
 //                $sentDataRes = Bitrixfunctions::makePostRequest(self::REQUEST_URL,
@@ -342,10 +347,12 @@ class Customevent{
                 ($contractsArr) ? $contract = $contractsArr[0] : $contract = [];
 
                 $onSentArr = [
+//                    '1C_DEAL_ID' => $dealData[0]['UF_CRM_1571137429'], //ID 1C
+//                    '1C_COMPANY_ID' => '',
+                    'ID' => $dealData[0]['ID'], //ID 1C
                     'TITLE' => HTMLToTxt($dealData[0]['TITLE']),
-                    '1C_DEAL_ID' => $dealData[0]['UF_CRM_1571137429'], //ID 1C
 
-                    'CATEGORY_ID' => $category,
+                    'CATEGORY' => $category,
                     'STAGE' => $stage,
 
                     'SHIPMENT_DATE' => $dealData[0]['CLOSEDATE'],
@@ -364,7 +371,7 @@ class Customevent{
                     'SUB_DIVISION' => $subDivision,
                     'OPERATION' => $operation,
 
-                    '1C_COMPANY_ID' => '',
+                    'COMPANY_ID' => $dealData[0]['COMPANY_ID'],
                     'CONTACTS' => [],
                     'PRODUCTS' => [],
                     'OUTLETS' => $outlets,
@@ -387,7 +394,7 @@ class Customevent{
                         );
 
                         if($productProp){
-                            $product['1C_PRODUCT_ID'] = $productProp[0]['PROPERTY_88_VALUE'];
+//                            $product['1C_PRODUCT_ID'] = $productProp[0]['PROPERTY_88_VALUE'];
                             $onSentArr['PRODUCTS'][] = $product;
                         }
 
@@ -402,18 +409,19 @@ class Customevent{
                         ['ID' => $contactsIds],['ID','UF_CRM_1571224508']);
                     if($contacts){
                         foreach ($contacts as $contact)
-                            $onSentArr['CONTACTS'][]['1C_CONTACT_ID'] = $contact['UF_CRM_1571224508'];
+//                            $onSentArr['CONTACTS'][]['1C_CONTACT_ID'] = $contact['UF_CRM_1571224508'];
+                            $onSentArr['CONTACTS'][]['ID'] = $contact['ID'];
                     }
                 }
 
                 //Компания и ее ID в 1С
-                if($dealData[0]['COMPANY_ID'] > 0){
-                    $companyResult = Bitrixfunctions::getCompanyData(
-                        ['ID' => $dealData[0]['COMPANY_ID']],
-                        ['ID','UF_CRM_1571234538']
-                    );
-                    if($companyResult) $onSentArr['1C_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
-                }
+//                if($dealData[0]['COMPANY_ID'] > 0){
+//                    $companyResult = Bitrixfunctions::getCompanyData(
+//                        ['ID' => $dealData[0]['COMPANY_ID']],
+//                        ['ID','UF_CRM_1571234538']
+//                    );
+//                    if($companyResult) $onSentArr['1C_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
+//                }
 
 
                 //                $sentDataRes = Bitrixfunctions::makePostRequest(self::REQUEST_URL,
@@ -473,6 +481,10 @@ class Customevent{
             $invoiceData = Bitrixfunctions::getInvoiceData(['ID' => $arFields['ID']],$invoiceSelect);
             if($invoiceData) {
 
+                ($invoiceData[0]['STATUS_ID'])
+                    ? $status = self::getRefferenceValArrByTypeAndId('INVOICE_STATUS',$invoiceData[0]['STATUS_ID'])
+                    : $status = [];
+
                 $assignedEmail = '';
                 if($invoiceData[0]['RESPONSIBLE_ID']){
                     $assignedByData = Bitrixfunctions::getUserData($invoiceData[0]['RESPONSIBLE_ID']);
@@ -491,6 +503,21 @@ class Customevent{
                         : $managerEmail = '';
                 }
 
+
+                //ЗНАЧЕНИЯ ПОЛЬЗОВАТЕЛЬСКИХ ПОЛЕЙ
+
+                //способ доставки
+                ($invoiceData[0]['UF_CRM_5DC2E5E11C29C'])
+                    ? $shipmentMethod = self::getFieldValMassiveByValId(['ID' => $invoiceData[0]['UF_CRM_5DC2E5E11C29C']])
+                    : $shipmentMethod = [];
+
+                //подразделение
+                ($invoiceData[0]['UF_CRM_5DC2E5E14F9A0'])
+                    ? $subDivision = self::getFieldValMassiveByValId(['ID' => $invoiceData[0]['UF_CRM_5DC2E5E14F9A0']])
+                    : $subDivision = [];
+
+                //ЗНАЧЕНИЯ ПОЛЬЗОВАТЕЛЬСКИХ ПОЛЕЙ
+
                 //торговые точки
                 $outlets = self::getOutlets(['IBLOCK_ID' => self::IBLOCK_32,'ID' => $invoiceData[0]['UF_CRM_1573053996']]);
 
@@ -499,17 +526,22 @@ class Customevent{
                 ($contractsArr) ? $contract = $contractsArr[0] : $contract = [];
 
                 $onSentArr = [
-                    '1C_INVOICE_ID' => $invoiceData[0]['UF_CRM_1571761946'],
-                    '1C_DEAL_ID' => '',
+//                    '1C_INVOICE_ID' => $invoiceData[0]['UF_CRM_1571761946'],
+//                    '1C_DEAL_ID' => '',
+                    'ID' => $invoiceData[0]['ID'],
+                    'STATUS' => $status,
+                    'DEAL_ID' => $invoiceData[0]['UF_DEAL_ID'],
                     'TITLE' => $invoiceData[0]['ORDER_TOPIC'],
                     'NUMBER' => $invoiceData[0]['ACCOUNT_NUMBER'],
-                    'SUM' => $invoiceData[0]['PRICE'],
-                    'CURRENCY' => $invoiceData[0]['CURRENCY'],
+                    'OPPORTUNITY' => $invoiceData[0]['PRICE'],
+                    'CURRENCY_ID' => $invoiceData[0]['CURRENCY'],
                     'ASSIGNED_BY' => $assignedEmail,
                     'COMMENTS' => $invoiceData[0]['COMMENTS'],
+                    'INVOICE_DESCRIPTION' => $invoiceData[0]['USER_DESCRIPTION'],
+                    'DATE_PAY_BEFORE' => $invoiceData[0]['DATE_PAY_BEFORE'],
 
-                    'SUB_DIVISION' => $invoiceData[0]['UF_CRM_5DC2E5E14F9A0'],
-                    'SHIPMENT_METHOD' => $invoiceData[0]['UF_CRM_5DC2E5E11C29C'],
+                    'SUB_DIVISION' => $subDivision,
+                    'SHIPMENT_METHOD' => $shipmentMethod,
                     'AGREEMENT' => $invoiceData[0]['UF_CRM_5DC2E5E12E942'],
                     'STORE' => $invoiceData[0]['UF_CRM_5DC2E5E15B6C3'],
                     'SHIPMENT_ZONE' => $invoiceData[0]['UF_CRM_5DC2E5E1453D9'],
@@ -521,20 +553,29 @@ class Customevent{
                     'CONTRACT' => $contract,
                     'PRODUCTS' => [],
 
-                    'MY_COMPANY' => [
-                        '1C_MY_COMPANY_ID' => '',
-                        'REQUISITES' => [
-                            'MAIN' => [],
-                            'BANK' => [],
-                        ],
+                    'MY_REQUISITES' => [
+//                        '1C_MY_COMPANY_ID' => '',
+//                        'MY_COMPANY_ID' => $invoiceData[0]['UF_MYCOMPANY_ID'],
+//                        'REQUISITES' => [
+//                            'MAIN' => [],
+//                            'BANK' => [],
+//                        ],
+
+                        'MAIN' => [],
+                        'BANK' => [],
                     ],
-                    'CLIENT' => [
-                        '1C_CONTACT_ID' => '',
-                        '1C_COMPANY_ID' => '',
-                        'REQUISITES' => [
-                            'MAIN' => [],
-                            'BANK' => [],
-                        ],
+                    'CLIENT_REQUISITES' => [
+//                        '1C_CONTACT_ID' => '',
+//                        '1C_COMPANY_ID' => '',
+//                        'CONTACT_ID' => $invoiceData[0]['UF_CONTACT_ID'],
+//                        'COMPANY_ID' => $invoiceData[0]['UF_COMPANY_ID'],
+//                        'REQUISITES' => [
+//                            'MAIN' => [],
+//                            'BANK' => [],
+//                        ],
+
+                        'MAIN' => [],
+                        'BANK' => [],
                     ],
 
                     /*
@@ -563,7 +604,8 @@ class Customevent{
                             'order' => ['ID' => 'DESC'],
                         ];
                         $myMainRequisites = Bitrixfunctions::getRequisiteByFilter($reqFilter);
-                        if($myMainRequisites) $onSentArr['MY_COMPANY']['REQUISITES']['MAIN'] = $myMainRequisites[0];
+//                        if($myMainRequisites) $onSentArr['MY_COMPANY']['REQUISITES']['MAIN'] = $myMainRequisites[0];
+                        if($myMainRequisites) $onSentArr['MY_REQUISITES']['MAIN'] = $myMainRequisites[0];
                     }
 
                     //банковские реквизиты
@@ -571,7 +613,8 @@ class Customevent{
                         $myBankRequisites = Bitrixfunctions::getBankRequisitesByFilter(
                             ['ID' => $requisitesSelected[0]['MC_BANK_DETAIL_ID']]
                         );
-                        if($myBankRequisites) $onSentArr['MY_COMPANY']['REQUISITES']['BANK'] = $myBankRequisites[0];
+//                        if($myBankRequisites) $onSentArr['MY_COMPANY']['REQUISITES']['BANK'] = $myBankRequisites[0];
+                        if($myBankRequisites) $onSentArr['MY_REQUISITES']['BANK'] = $myBankRequisites[0];
                     }
 
 
@@ -583,7 +626,7 @@ class Customevent{
                             'order' => ['ID' => 'DESC'],
                         ];
                         $clientMainRequisites = Bitrixfunctions::getRequisiteByFilter($reqFilter);
-                        if($clientMainRequisites) $onSentArr['CLIENT']['REQUISITES']['MAIN'] = $clientMainRequisites[0];
+                        if($clientMainRequisites) $onSentArr['CLIENT_REQUISITES']['MAIN'] = $clientMainRequisites[0];
                     }
 
                     //клиент, банковские реквизиты
@@ -591,46 +634,47 @@ class Customevent{
                         $clientBankRequisites = Bitrixfunctions::getBankRequisitesByFilter(
                             ['ID' => $requisitesSelected[0]['BANK_DETAIL_ID']]
                         );
-                        if($clientBankRequisites) $onSentArr['CLIENT']['REQUISITES']['BANK'] = $clientBankRequisites[0];
+                        if($clientBankRequisites) $onSentArr['CLIENT_REQUISITES']['BANK'] = $clientBankRequisites[0];
                     }
                 }
 
 
                 //My_COMPANY_ID
-                if($invoiceData[0]['UF_MYCOMPANY_ID'] > 0){
-                    $companyResult = Bitrixfunctions::getCompanyData(
-                        ['ID' => $invoiceData[0]['UF_MYCOMPANY_ID']],
-                        ['ID','UF_CRM_1571234538']
-                    );
-                    if($companyResult) $onSentArr['MY_COMPANY']['1C_MY_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
-                }
+//                if($invoiceData[0]['UF_MYCOMPANY_ID'] > 0){
+//                    $onSentArr['MY_COMPANY']['MY_COMPANY_ID'] = $invoiceData[0]['ID'];
+//                    $companyResult = Bitrixfunctions::getCompanyData(
+//                        ['ID' => $invoiceData[0]['UF_MYCOMPANY_ID']],
+//                        ['ID','UF_CRM_1571234538']
+//                    );
+//                    if($companyResult) $onSentArr['MY_COMPANY']['1C_MY_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
+//                }
 
 
                 //получение 1C_ID сделки, компании и контакта, ну и предложения - пока без!
 
-                if($invoiceData[0]['UF_CONTACT_ID'] > 0){
-                    $contactData = Bitrixfunctions::getContactData(
-                        ['ID' => $invoiceData[0]['UF_CONTACT_ID']],['ID','UF_CRM_1571224508']);
-                    if($contactData)
-                        $onSentArr['CLIENT']['1C_CONTACT_ID'] = $contactData[0]['UF_CRM_1571224508'];
-                }
+//                if($invoiceData[0]['UF_CONTACT_ID'] > 0){
+//                    $contactData = Bitrixfunctions::getContactData(
+//                        ['ID' => $invoiceData[0]['UF_CONTACT_ID']],['ID','UF_CRM_1571224508']);
+//                    if($contactData)
+//                        $onSentArr['CLIENT']['1C_CONTACT_ID'] = $contactData[0]['UF_CRM_1571224508'];
+//                }
 
 
-                if($invoiceData[0]['UF_COMPANY_ID'] > 0){
-                    $companyResult = Bitrixfunctions::getCompanyData(
-                        ['ID' => $invoiceData[0]['UF_COMPANY_ID']],
-                        ['ID','UF_CRM_1571234538']
-                    );
-                    if($companyResult) $onSentArr['CLIENT']['1C_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
-                }
+//                if($invoiceData[0]['UF_COMPANY_ID'] > 0){
+//                    $companyResult = Bitrixfunctions::getCompanyData(
+//                        ['ID' => $invoiceData[0]['UF_COMPANY_ID']],
+//                        ['ID','UF_CRM_1571234538']
+//                    );
+//                    if($companyResult) $onSentArr['CLIENT']['1C_COMPANY_ID'] = $companyResult[0]['UF_CRM_1571234538'];
+//                }
 
-                if($invoiceData[0]['UF_DEAL_ID'] > 0){
-                    $dealResult = Bitrixfunctions::getDealData(
-                        ['ID' => $invoiceData[0]['UF_DEAL_ID']],
-                        ['ID','UF_CRM_1571137429']
-                    );
-                    if($dealResult) $onSentArr['1C_DEAL_ID'] = $dealResult[0]['UF_CRM_1571137429'];
-                }
+//                if($invoiceData[0]['UF_DEAL_ID'] > 0){
+//                    $dealResult = Bitrixfunctions::getDealData(
+//                        ['ID' => $invoiceData[0]['UF_DEAL_ID']],
+//                        ['ID','UF_CRM_1571137429']
+//                    );
+//                    if($dealResult) $onSentArr['1C_DEAL_ID'] = $dealResult[0]['UF_CRM_1571137429'];
+//                }
 
                 //qoute SAME!!!
 //                if($invoiceData[0]['UF_QUOTE_ID'] > 0){
@@ -641,67 +685,6 @@ class Customevent{
 //                    if($quoteResult) $onSentArr['1C_QUOTE_ID'] = $quoteResult[0]['UF_CRM_1571762030'];
 //                }
 
-
-                //торговые точки, массив
-//                $outlets = Bitrixfunctions::getListElementsByFilter(
-//                    ['IBLOCK_ID' => self::IBLOCK_32,'ID' => $invoiceData[0]['UF_CRM_1573053996']],
-//                    ['ID','NAME','PROPERTY_92','PROPERTY_93','PROPERTY_96','PROPERTY_97','PROPERTY_98','PROPERTY_99','PROPERTY_100']
-//                );
-//
-//                if($outlets)
-//                    foreach ($outlets as $outlet){
-//
-//                        //получаем 1C ID контактов на точках, если они выбраны в точке
-//                        $serviceContact = '';
-//                        $lawyerContact = '';
-//                        $accountantContact = '';
-//                        $decisionMakingContact = '';
-//                        $marketingContact = '';
-//
-//                        if($outlet['PROPERTY_96_VALUE']){
-//                            $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_96_VALUE']],['ID','UF_CRM_1571224508']);
-//                            ($contactResult) ? $serviceContact = $contactResult[0]['UF_CRM_1571224508'] : $serviceContact = '';
-//                        }
-//                        if($outlet['PROPERTY_97_VALUE']){
-//                            $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_97_VALUE']],['ID','UF_CRM_1571224508']);
-//                            ($contactResult) ? $lawyerContact = $contactResult[0]['UF_CRM_1571224508'] : $lawyerContact = '';
-//                        }
-//                        if($outlet['PROPERTY_98_VALUE']){
-//                            $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_98_VALUE']],['ID','UF_CRM_1571224508']);
-//                            ($contactResult) ? $accountantContact = $contactResult[0]['UF_CRM_1571224508'] : $accountantContact = '';
-//                        }
-//                        if($outlet['PROPERTY_99_VALUE']){
-//                            $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_99_VALUE']],['ID','UF_CRM_1571224508']);
-//                            ($contactResult) ? $decisionMakingContact = $contactResult[0]['UF_CRM_1571224508'] : $decisionMakingContact = '';
-//                        }
-//                        if($outlet['PROPERTY_100_VALUE']){
-//                            $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_100_VALUE']],['ID','UF_CRM_1571224508']);
-//                            ($contactResult) ? $marketingContact = $contactResult[0]['UF_CRM_1571224508'] : $marketingContact = '';
-//                        }
-//
-//                        $onSentArr['OUTLETS'][] = [
-//                            'OUTLET_ADDRESS' => $outlet['NAME'],
-//                            'SERVICE_CONTACT'=> $serviceContact,
-//                            'LAWYER_CONTACT'=> $lawyerContact,
-//                            'ACCOUNTANT_CONTACT'=> $accountantContact,
-//                            'DECISION_MAKING_CONTACT'=> $decisionMakingContact,
-//                            'MARKETING_CONTACT'=> $marketingContact,
-//                            '1C_OUTLET_ID' => $outlet['PROPERTY_93_VALUE'],
-//                        ];
-//                    }
-
-                //договора
-//                $contracts = Bitrixfunctions::getListElementsByFilter(
-//                    ['IBLOCK_ID' => self::IBLOCK_31,'ID' => $invoiceData[0]['UF_CRM_1573053794']],
-//                    ['ID','NAME','PROPERTY_89','PROPERTY_90','PROPERTY_91']
-//                );
-//                if($contracts)
-//                    foreach ($contracts as $contract)
-//                        $onSentArr['CONTRACT'] = [
-//                            'CONTRACT' => $contract['NAME'],
-//                            'DATE_FROM' => $contract['PROPERTY_90_VALUE'],
-//                            '1C_CONTRACT_ID' => $contract['PROPERTY_91_VALUE'],
-//                        ];
 
                 //products
                 $invoiceProducts = Bitrixfunctions::getInvoiceProducts($invoiceData[0]['ID']);
@@ -715,17 +698,8 @@ class Customevent{
                         );
 
                         if($productProp){
-
-                            $product['1C_PRODUCT_ID'] = $productProp[0]['PROPERTY_88_VALUE'];
-//                            $product['ID_2'] = $productProp[0]['ID'];
-
+//                            $product['1C_PRODUCT_ID'] = $productProp[0]['PROPERTY_88_VALUE'];
                             $onSentArr['PRODUCTS'][] = $product;
-
-//                            $onSentArr['PRODUCTS'][] = [
-//                                'NAME' => $productProp[0]['NAME'],
-//                                '1C_PRODUCT_ID' => $productProp[0]['PROPERTY_88_VALUE'],
-//                            ];
-
                         }
 
                     }
@@ -827,22 +801,25 @@ class Customevent{
         if($prop){
             $contrArr = explode('_',$prop);
 
+            $client1CiD = ['TYPE' => $contrArr[0],'ID' => $contrArr[1]];
+
             //получаем 1C_ID контакта
-            if($contrArr[0] == 'C'){
-                $contactResult = Bitrixfunctions::getContactData(['ID' => $contrArr[1]],['ID','UF_CRM_1571224508']);
-                if($contactResult) {
-                    $client1CiD['1C_CLIENT_ID'] = $contactResult[0]['UF_CRM_1571224508'];
-                    $client1CiD['TYPE'] = $contrArr[0];
-                }
-            }
-            //получаем 1C_ID компании
-            if($contrArr[0] == 'CO'){
-                $companyResult = Bitrixfunctions::getCompanyData(['ID' => $contrArr[1]],['ID','UF_CRM_1571234538']);
-                if($companyResult) {
-                    $client1CiD['1C_CLIENT_ID'] = $companyResult[0]['UF_CRM_1571234538'];
-                    $client1CiD['TYPE'] = $contrArr[0];
-                }
-            }
+//            if($contrArr[0] == 'C'){
+//                $contactResult = Bitrixfunctions::getContactData(['ID' => $contrArr[1]],['ID','UF_CRM_1571224508']);
+//                if($contactResult) {
+//                    $client1CiD['1C_CLIENT_ID'] = $contactResult[0]['UF_CRM_1571224508'];
+//                    $client1CiD['1C_CLIENT_ID'] = $contactResult[0]['UF_CRM_1571224508'];
+//                    $client1CiD['TYPE'] = $contrArr[0];
+//                }
+//            }
+//            //получаем 1C_ID компании
+//            if($contrArr[0] == 'CO'){
+//                $companyResult = Bitrixfunctions::getCompanyData(['ID' => $contrArr[1]],['ID','UF_CRM_1571234538']);
+//                if($companyResult) {
+//                    $client1CiD['1C_CLIENT_ID'] = $companyResult[0]['UF_CRM_1571234538'];
+//                    $client1CiD['TYPE'] = $contrArr[0];
+//                }
+//            }
         }
 
         return $client1CiD;
@@ -876,6 +853,7 @@ class Customevent{
                 else $email = HTMLToTxt($comm['VALUE']);
 
                 $result[] = [
+                    'ID' =>  $comm['ID'],
                     'TYPE_ID' => $comm['TYPE_ID'],
                     'TYPE' => $comm['VALUE_TYPE'],
                     'VALUE' => $email,
@@ -894,45 +872,54 @@ class Customevent{
             foreach ($outlets as $outlet){
 
                 //получаем 1C ID контактов на точках, если они выбраны в точке
-                $serviceContact = '';
-                $lawyerContact = '';
-                $accountantContact = '';
-                $decisionMakingContact = '';
-                $marketingContact = '';
-
-                if($outlet['PROPERTY_96_VALUE']){
-                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_96_VALUE']],['ID','UF_CRM_1571224508']);
-                    ($contactResult) ? $serviceContact = $contactResult[0]['UF_CRM_1571224508'] : $serviceContact = '';
-                }
-                if($outlet['PROPERTY_97_VALUE']){
-                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_97_VALUE']],['ID','UF_CRM_1571224508']);
-                    ($contactResult) ? $lawyerContact = $contactResult[0]['UF_CRM_1571224508'] : $lawyerContact = '';
-                }
-                if($outlet['PROPERTY_98_VALUE']){
-                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_98_VALUE']],['ID','UF_CRM_1571224508']);
-                    ($contactResult) ? $accountantContact = $contactResult[0]['UF_CRM_1571224508'] : $accountantContact = '';
-                }
-                if($outlet['PROPERTY_99_VALUE']){
-                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_99_VALUE']],['ID','UF_CRM_1571224508']);
-                    ($contactResult) ? $decisionMakingContact = $contactResult[0]['UF_CRM_1571224508'] : $decisionMakingContact = '';
-                }
-                if($outlet['PROPERTY_100_VALUE']){
-                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_100_VALUE']],['ID','UF_CRM_1571224508']);
-                    ($contactResult) ? $marketingContact = $contactResult[0]['UF_CRM_1571224508'] : $marketingContact = '';
-                }
+//                $serviceContact = '';
+//                $lawyerContact = '';
+//                $accountantContact = '';
+//                $decisionMakingContact = '';
+//                $marketingContact = '';
+//
+//                if($outlet['PROPERTY_96_VALUE']){
+//                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_96_VALUE']],['ID','UF_CRM_1571224508']);
+//                    ($contactResult) ? $serviceContact = $contactResult[0]['UF_CRM_1571224508'] : $serviceContact = '';
+//                }
+//                if($outlet['PROPERTY_97_VALUE']){
+//                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_97_VALUE']],['ID','UF_CRM_1571224508']);
+//                    ($contactResult) ? $lawyerContact = $contactResult[0]['UF_CRM_1571224508'] : $lawyerContact = '';
+//                }
+//                if($outlet['PROPERTY_98_VALUE']){
+//                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_98_VALUE']],['ID','UF_CRM_1571224508']);
+//                    ($contactResult) ? $accountantContact = $contactResult[0]['UF_CRM_1571224508'] : $accountantContact = '';
+//                }
+//                if($outlet['PROPERTY_99_VALUE']){
+//                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_99_VALUE']],['ID','UF_CRM_1571224508']);
+//                    ($contactResult) ? $decisionMakingContact = $contactResult[0]['UF_CRM_1571224508'] : $decisionMakingContact = '';
+//                }
+//                if($outlet['PROPERTY_100_VALUE']){
+//                    $contactResult = Bitrixfunctions::getContactData(['ID' => $outlet['PROPERTY_100_VALUE']],['ID','UF_CRM_1571224508']);
+//                    ($contactResult) ? $marketingContact = $contactResult[0]['UF_CRM_1571224508'] : $marketingContact = '';
+//                }
 
                 $outletArr = [
+                    'ID' => $outlet['ID'],
                     'OUTLET_ADDRESS' => $outlet['NAME'],
-                    'SERVICE_CONTACT'=> $serviceContact,
-                    'LAWYER_CONTACT'=> $lawyerContact,
-                    'ACCOUNTANT_CONTACT'=> $accountantContact,
-                    'DECISION_MAKING_CONTACT'=> $decisionMakingContact,
-                    'MARKETING_CONTACT'=> $marketingContact,
-                    '1C_OUTLET_ID' => $outlet['PROPERTY_93_VALUE'],
+                    'SERVICE_CONTACT'=> $outlet['PROPERTY_96_VALUE'],
+                    'LAWYER_CONTACT'=> $outlet['PROPERTY_97_VALUE'],
+                    'ACCOUNTANT_CONTACT'=> $outlet['PROPERTY_98_VALUE'],
+                    'DECISION_MAKING_CONTACT'=> $outlet['PROPERTY_99_VALUE'],
+                    'MARKETING_CONTACT'=> $outlet['PROPERTY_100_VALUE'],
+
+//                    'ID' => $outlet['ID'],
+//                    'OUTLET_ADDRESS' => $outlet['NAME'],
+//                    'SERVICE_CONTACT'=> $serviceContact,
+//                    'LAWYER_CONTACT'=> $lawyerContact,
+//                    'ACCOUNTANT_CONTACT'=> $accountantContact,
+//                    'DECISION_MAKING_CONTACT'=> $decisionMakingContact,
+//                    'MARKETING_CONTACT'=> $marketingContact,
+//                    '1C_OUTLET_ID' => $outlet['PROPERTY_93_VALUE'],
                 ];
                 if($flag == 'all'){
                     $outletArr['CLIENT'] = self::returnCompanyOrContact1CiD($outlet['PROPERTY_92_VALUE']);
-                    $outletArr['ID'] = $outlet['ID'];
+//                    $outletArr['ID'] = $outlet['ID'];
                 }
 
                 $result[] = $outletArr;
@@ -949,14 +936,16 @@ class Customevent{
             foreach ($contracts as $contract){
 
                 $contractArr = [
+                    'ID' => $contract['ID'],
                     'CONTRACT' => $contract['NAME'],
                     'DATE_FROM' => $contract['PROPERTY_90_VALUE'],
-                    '1C_CONTRACT_ID' => $contract['PROPERTY_91_VALUE'],
+                    'DATE_FROM' => $contract['PROPERTY_90_VALUE'],
+//                    '1C_CONTRACT_ID' => $contract['PROPERTY_91_VALUE'],
                 ];
 
                 if($flag == 'all'){
                     $contractArr['CLIENT'] = self::returnCompanyOrContact1CiD($contract['PROPERTY_89_VALUE']);
-                    $contractArr['ID'] = $contract['ID'];
+//                    $contractArr['ID'] = $contract['ID'];
                 }
 
                 $result[] = $contractArr;
